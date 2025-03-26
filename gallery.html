@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quote Gallery</title>
+    <style>
+        body {
+            font-family: cursive;
+            background-color:rgb(82, 22, 66);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container a{
+            margin-top: 2em;
+        }
+        .container {
+            text-align: center;
+            padding: 30px;
+            background-color:rgb(204, 153, 180);
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 1000px;
+        }
+
+        h1 {
+            color:rgb(26, 4, 26);
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        select {
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            background-color:rgb(236, 207, 231);
+            border: 1px solid rgb(34, 5, 30);
+            border-radius: 8px;
+            transition: 0.3s ease;
+        }
+
+        select:focus {
+            border-color:rgb(60, 4, 48);
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .quote {
+            background-color: rgb(231, 214, 228);
+            border-radius: 15px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .quote:hover {
+            transform: scale(1.05);
+        }
+
+        .quote img {
+            max-width: 100%;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .quote img:hover {
+            transform: scale(1.1);
+        }
+
+        button {
+            padding: 12px 20px;
+            background-color:rgb(86, 3, 59);
+            border: 1px solid rgb(34, 5, 30);
+            color: white;
+            margin-top:2em;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color:rgb(245, 186, 241);
+            color:rgb(36, 0, 24);
+        }
+
+        .back-button {
+            margin-top: 30px;
+            padding: 12px 25px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color:rgb(36, 1, 41);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            select {
+                width: 100%;
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .gallery {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Quote Gallery</h1>
+
+        <!-- Dropdown menu for quote categories -->
+        <select id="quoteCategory" onchange="loadQuotes()">
+            <option value="happy">Happy</option>
+            <option value="sad">Sad</option>
+            <option value="motivational">Motivational</option>
+        </select>
+
+        <!-- Gallery container -->
+        <div id="quoteGallery" class="gallery">
+            <!-- Quotes will be displayed here -->
+        </div>
+
+        <!-- Back Button -->
+        <a href="/#home">
+            <button>Back</button>
+        </a>
+    </div>
+
+    <script>
+        // Sample data structure for quotes
+        const quotes = {
+            happy: [
+                { image: 'https://tse2.mm.bing.net/th?id=OIP.HUXqNFfa0xOzWOsw2emPEQHaE7&pid=Api&P=0&h=180', text: 'Happiness is a choice.' },
+                { image: 'https://tse2.mm.bing.net/th?id=OIP.HUXqNFfa0xOzWOsw2emPEQHaE7&pid=Api&P=0&h=180', text: 'Live with joy!' },
+            ],
+            sad: [
+                { image: 'https://via.placeholder.com/200x200?text=Sad+Quote+1', text: 'Sadness is part of life.' },
+                { image: 'https://via.placeholder.com/200x200?text=Sad+Quote+2', text: 'Tears are words that need to be written.' },
+            ],
+            motivational: [
+                { image: 'https://via.placeholder.com/200x200?text=Motivational+Quote+1', text: 'The only way is up!' },
+                { image: 'https://via.placeholder.com/200x200?text=Motivational+Quote+2', text: 'You are stronger than you think.' },
+            ]
+        };
+
+        // Function to load quotes based on the category selected
+        function loadQuotes() {
+            const category = document.getElementById('quoteCategory').value;
+            const gallery = document.getElementById('quoteGallery');
+            
+            // Clear existing quotes
+            gallery.innerHTML = '';
+
+            // Load the quotes for the selected category
+            const selectedQuotes = quotes[category];
+            
+            selectedQuotes.forEach(quote => {
+                const quoteDiv = document.createElement('div');
+                quoteDiv.classList.add('quote');
+                
+                // Add the image
+                const quoteImage = document.createElement('img');
+                quoteImage.src = quote.image;
+                quoteDiv.appendChild(quoteImage);
+                
+                // Add the text
+                const quoteText = document.createElement('p');
+                quoteText.innerText = quote.text;
+                quoteDiv.appendChild(quoteText);
+
+                // Create the "Copy" button
+                const copyButton = document.createElement('button');
+                copyButton.innerText = 'Copy Image & Quote';
+                copyButton.onclick = function() {
+                    copyQuoteAndImage(quote.image, quote.text);
+                };
+                quoteDiv.appendChild(copyButton);
+
+                // Append the quote to the gallery
+                gallery.appendChild(quoteDiv);
+            });
+        }
+
+        // Function to copy quote and image URL to clipboard
+        function copyQuoteAndImage(imageUrl, text) {
+            // Prepare the content to be copied
+            const quoteContent = `
+                Quote: ${text}\n
+                Image URL: ${imageUrl}
+            `;
+
+            // Create a temporary textarea to copy the content
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = quoteContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            // Notify the user
+            alert('Quote and image URL copied to clipboard!');
+        }
+
+        // Function to go back to the main page
+        
+
+        // Initial load for the 'happy' category
+        loadQuotes();
+    </script>
+</body>
+</html>

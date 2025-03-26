@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quotify</title>
+    <style>
+      body {
+        font-family: cursive;
+        background-color: #c890a7;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+       
+        
+      }
+
+      /* Navbar Styles */
+      nav {
+        width: 100%;
+        background-color: #fbf5e5;
+        color: #fff;
+        padding: 40px 10px;
+        position: fixed;
+        top: 0;
+        z-index: 1000;
+      }
+
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 30px;
+      }
+
+      .navbar-brand {
+        font-size: 40px;
+        color: rgba(38, 24, 24, 0.92);
+        text-decoration: none;
+        display: flex;
+        padding-left: 50px;
+        font-weight: 800;
+      }
+
+      .navbar-nav {
+        list-style-type: none;
+        color: rgba(38, 24, 24, 0.92);
+        margin: 5px;
+        display: flex;
+        justify-content: space-around;
+        padding-right: 9em;
+      }
+
+      .navbar-nav li {
+        color: black;
+        padding-right: 20px;
+        display: flex;
+        justify-content: space-around;
+      }
+
+      .navbar-nav a {
+        color: rgba(159, 87, 87, 0.92);
+        font-size: 24px;
+        text-decoration: none;
+        justify-content: space-around;
+        text-weight: 800;
+      }
+
+      .navbar-nav a:hover {
+        font-size: 24px;
+        color: rgba(76, 56, 56, 0.92);
+        transform: scale(1.05);
+        cursor: pointer;
+        box-shadow: rgb(175, 145, 127);
+        transition: transform 0.3s ease-in-out;
+      }
+
+      /* Form Styles */
+      .container {
+        background-color: #fbf5e5;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(156, 125, 125, 0.1);
+        max-width: 400px;
+        width: 100%;
+        padding: 20px;
+        overflow: hidden;
+        box-sizing: border-box;
+        margin-top: 20em; /* Space for navbar */
+      }
+
+      h2 {
+        text-align: center;
+        color: #333;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 8px;
+        display: block;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+        box-sizing: border-box;
+        
+      }
+
+      .form-group input:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: #212121;
+        text-decoration: none;
+      }
+
+      .form-group button {
+        width: 100%;
+        padding: 12px;
+        background-color: #212121;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      .form-group button:hover {
+        background-color:rgb(158, 142, 142);
+      }
+
+      .toggle-link {
+        text-align: center;
+        margin-top: 10px;
+      }
+
+      .toggle-link a {
+        color: #6c63ff;
+        text-decoration: none;
+      }
+
+      .toggle-link a:hover {
+        text-decoration: underline;
+      }
+
+      .content {
+        padding: 40px;
+        background-color: #fbf5e5;
+        border-radius: 1.5rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 800px;
+        margin-top: 15em;
+        
+      }
+
+      .content h2 {
+        text-align: center;
+        color: #a35c7a;
+        font-family: cursive;
+      }
+
+      .section {
+        margin-bottom: 30px;
+      }
+
+      .team {
+        display: flex;
+        gap: 20px;
+        font-family: cursive;
+      }
+
+      .photo{
+        border-radius: 15px;
+      }
+
+      .team-member {
+        background: #eaeaea;
+        padding-bottom: 10px;
+        border-radius: 8px;
+        text-align: center;
+        flex: 1;
+      }
+
+      .page{
+        flex: 1 1 30rem;
+        margin:1.5rem;
+        flex-direction:row;
+    background:#fbf5e5;
+    padding: 40px 130px;
+    border-radius: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    border: .1rem solid rgb(143, 130, 130);
+    transition: .5s ease;
+      }
+
+      .theme{
+        
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: flex;
+    justify-content: center;
+    align-items: center;
+      }
+      
+    </style>
+  </head>
+  <body>
+    <header>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <a class="navbar-brand">Quotify</a>
+      <ul class="navbar-nav">
+        <li><a href="#home" onclick="toggleContent('home')">Home</a></li>
+        <li><a href="#about" onclick="toggleContent('about')">About Us</a></li>
+        <li>
+          <a href="#contact" onclick="toggleContent('contact')">Contact Us</a>
+        </li>
+        <li><a href="#login" onclick="toggleContent('login')">Sign-in</a></li>
+      </ul>
+    </nav>
+
+    <!-- Home Section -->
+    <div id="home" class="content">
+      <h2>Welcome to Quotify!</h2>
+
+      <p>
+        We're thrilled to have you here. Explore a world of inspiring quotes,
+        motivational messages, and thought-provoking insights designed to
+        elevate your mindset and spark creativity. Whether you're looking for
+        daily inspiration or seeking the perfect words to share, Quotify is your
+        go-to source. We're excited to join you on this journey of positivity
+        and wisdom. Enjoy your stay!
+      </p>
+
+      
+    </div>
+
+      <section class="theme">
+          <div class="page">
+              <h2>Quote</h2>
+              <a href="quote" onclick="toggleContent('quote')" >Wanna search Quotes?</a>
+          </div>
+
+          <div class="page">
+              <h2>Quote-Gallery</h2>
+              <p><a href="gallery" onclick="toggleContent('gallery')">Wanna search Quote-images?</a></p>
+          </div>
+
+        </section>
+
+    
+
+
+    <!-- About Quote Section -->
+
+    
+
+    <!-- About Us Section -->
+
+    <div id="about" class="content" style="display: none">
+      <h2>About Us</h2>
+      <p style="font-family: cursive">
+        Every day at Quotify, we dive into books, speeches, and history to find
+        quotes that move the heart and challenge the mind. Each quote is
+        handpicked to bring inspiration, wisdom, and motivation to our readers."
+        <br />Did you know? The shortest quote ever is just one word: ‘Go.’ – by
+        John Cage.
+      </p>
+      <div class="section">
+        <h2 style="margin-top: 40px">Meet the Team</h2>
+        <div class="team">
+          <div class="team-member">
+            <h3>Sapna Rathore</h3>
+            <img class="photo" src="https://tse2.mm.bing.net/th?id=OIP.HUXqNFfa0xOzWOsw2emPEQHaE7&pid=Api&P=0&h=180"
+            height="200px"  width="200px">
+        </div>
+          <div class="team-member">
+            <h3>Samiksha Yesade</h3>
+            <img class="photo" src="https://tse2.mm.bing.net/th?id=OIP.HUXqNFfa0xOzWOsw2emPEQHaE7&pid=Api&P=0&h=180"
+            height="200px"  width="200px">
+          </div>
+          <div class="team-member">
+            <h3>Laxmi Thorat</h3>
+            <img class="photo" src="https://tse2.mm.bing.net/th?id=OIP.HUXqNFfa0xOzWOsw2emPEQHaE7&pid=Api&P=0&h=180"
+            height="200px"  width="200px">
+            
+          </div>
+          
+        </div>
+        <p>We believe that inspiration should be shared! Follow us, submit your favorite quotes(abc@gmail.com), and be part of a community that loves the power of words as much as you do!</p>
+            
+      </div>
+    </div>
+  </header>
+    <!-- Login Form -->
+    <div id="login" class="container" style="display: none">
+      <h2>Login</h2>
+      <form action="/login" method="POST">
+        <div class="form-group">
+          <label for="login-email">Email</label>
+          <input
+            type="email"
+            id="login-email"
+            name="email"
+            placeholder="Enter your email"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input
+            type="password"
+            id="login-password"
+            name="password"
+            placeholder="Enter your password"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <button type="submit">Login</button>
+        </div>
+        <div class="toggle-link">
+          <p>Don't have an account? <a href="#signup" onclick="toggleContent('signup')">Sign-Up</p>
+        </div>
+      </form>
+    </div>
+
+    <div id="signup" class="container" style="display: none;">
+        <h2>Sign Up</h2>
+        <form action="/signup" method="POST">
+          <div class="form-group">
+            <label for="signup-name">Full Name</label>
+            <input
+              type="text"
+              id="signup-name"
+              name="name"
+              placeholder="Enter your full name"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="signup-email">Email</label>
+            <input
+              type="email"
+              id="signup-email"
+              name="email"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="signup-password">Password</label>
+            <input
+              type="password"
+              id="signup-password"
+              name="password"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <button type="submit">Sign Up</button>
+          </div>
+          <div class="toggle-link">
+            <p>Already have an account? <a href="#login" onclick="toggleContent('login')">Login</p>
+          </div>
+        </form>
+      </div>
+      
+
+    <!-- Contact Us Form -->
+    <div id="contact" class="container" style="display: none">
+      <h2>Contact Us</h2>
+      <form action="/contact" method="POST">
+        <div class="form-group">
+          <label for="contact-name">Full Name</label>
+          <input
+            type="text"
+            id="contact-name"
+            name="name"
+            placeholder="Your Full Name"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="contact-email">Email</label>
+          <input
+            type="email"
+            id="contact-email"
+            name="email"
+            placeholder="Your Email Address"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="contact-message">Message</label>
+          <textarea
+            id="contact-message"
+            name="message"
+            placeholder="Your Message"
+            rows="5"
+            required
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <button type="submit">Send Message</button>
+        </div>
+      </form>
+    </div>
+
+    <script>
+      // Function to toggle between sections
+      function toggleContent(section) {
+        // Hide all sections
+        const sections = document.querySelectorAll(".content, .container");
+        sections.forEach((section) => (section.style.display = "none"));
+
+        // Show the clicked section
+        document.getElementById(section).style.display = "block";
+      }
+    </script>
+  </body>
+</html>
