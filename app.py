@@ -67,3 +67,4 @@ def get_quotes():
 if __name__ == "__main__":
     app.run(debug=True)
 
+
