@@ -34,6 +34,10 @@ quotes = {
         "Smile, because it confuses people. 😆",
         "Happiness is like a butterfly, the more you chase it, the more it eludes you. 🦋",
         "You do not find a happy life. You make it. 💖"
+    ],
+    
+    "Movie":[
+        "I'll be back. - The Terminator"
     ]
 }
 
@@ -66,6 +70,7 @@ def get_quotes():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 
 
