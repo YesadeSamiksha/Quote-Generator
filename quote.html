@@ -93,6 +93,7 @@
         <button onclick="fetchQuote('love')">Love</button>
         <button onclick="fetchQuote('life')">Life</button>
         <button onclick="fetchQuote('friendship')">Friendship</button>
+        <button onclick="fetchQuote('Movie')">Iconic Movie Quotes</button>
         <button onclick="fetchQuote('happiness')">Happiness</button><br>
         <button class="copy-btn" onclick="copyQuote()">📋 Copy</button>
         <button class="dark-mode-btn" onclick="toggleDarkMode()">🌙 Dark Mode</button>
@@ -118,144 +119,177 @@
     </section>
 
     <script>
-        // Function to log browsing history
-        function logHistory(category) {
-            const excludedCategories = ["home", "about", "history"];
-            if (!excludedCategories.includes(category)) {
-                const timestamp = new Date().toLocaleString();
+        
+            // Function to toggle dark mode
+            function toggleDarkMode() {
+                const body = document.body;
+                const currentBackground = body.style.backgroundColor;
+                
+                // Toggle dark mode by changing background and text color
+                if (currentBackground === 'rgb(12, 9, 10)') { // Dark background color
+                    body.style.backgroundColor = '#C890A7'; // Original background color
+                    body.style.color = '#444'; // Original text color
+                    document.querySelector('h1').style.color = 'rgb(12, 9, 10)';
+                } else {
+                    body.style.backgroundColor = 'rgb(12, 9, 10)'; // Dark background color
+                    body.style.color = 'white'; // Light text color for dark mode
+                    document.querySelector('h1').style.color = 'white';
+                }
+            }
+        
+            // Function to toggle rainbow mode
+            function toggleRainbowMode() {
+                const body = document.body;
+                
+                // Toggle rainbow mode by adding or removing the animation class
+                if (body.classList.contains('rainbow-mode')) {
+                    body.classList.remove('rainbow-mode');
+                } else {
+                    body.classList.add('rainbow-mode');
+                }
+            }
+        
+            // Existing functions and other code
+            // Function to log browsing history
+            function logHistory(category) {
+                const excludedCategories = ["home", "about", "history"];
+                if (!excludedCategories.includes(category)) {
+                    const timestamp = new Date().toLocaleString();
+                    const history = JSON.parse(localStorage.getItem("quoteHistory")) || [];
+                    history.push({ category: category, time: timestamp });
+                    localStorage.setItem("quoteHistory", JSON.stringify(history));
+                }
+            }
+        
+            // Function to display the browsing history
+            function displayHistory() {
+                const historyList = document.getElementById("history-list");
+                historyList.innerHTML = "";
                 const history = JSON.parse(localStorage.getItem("quoteHistory")) || [];
-                history.push({ category: category, time: timestamp });
-                localStorage.setItem("quoteHistory", JSON.stringify(history));
+                if (history.length === 0) {
+                    historyList.innerHTML = "<li>No browsing history available.</li>";
+                } else {
+                    history.forEach(entry => {
+                        const listItem = document.createElement("li");
+                        listItem.textContent = `${entry.category} - ${entry.time}`;
+                        historyList.appendChild(listItem);
+                    });
+                }
             }
-        }
-
-        // Function to display the browsing history
-        function displayHistory() {
-            const historyList = document.getElementById("history-list");
-            historyList.innerHTML = "";
-            const history = JSON.parse(localStorage.getItem("quoteHistory")) || [];
-            if (history.length === 0) {
-                historyList.innerHTML = "<li>No browsing history available.</li>";
-            } else {
-                history.forEach(entry => {
-                    const listItem = document.createElement("li");
-                    listItem.textContent = `${entry.category} - ${entry.time}`;
-                    historyList.appendChild(listItem);
+        
+            // Function to mark a quote as favorite
+            function addFavoriteQuote() {
+                const quoteText = document.getElementById("quote-text").innerText;
+                const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+                
+                // Check if quote is already a favorite
+                if (favorites.includes(quoteText)) {
+                    alert("This quote is already in your favorites!");
+                } else {
+                    favorites.push(quoteText);
+                    localStorage.setItem("favorites", JSON.stringify(favorites));
+                    alert("Quote added to favorites! 💖");
+                }
+            }
+        
+            // Function to display favorite quotes
+            function displayFavorites() {
+                const favoritesList = document.getElementById("favorites-list");
+                favoritesList.innerHTML = "";
+                const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+                
+                if (favorites.length === 0) {
+                    favoritesList.innerHTML = "<li>No favorite quotes yet.</li>";
+                } else {
+                    favorites.forEach(quote => {
+                        const listItem = document.createElement("li");
+                        listItem.textContent = quote;
+                        favoritesList.appendChild(listItem);
+                    });
+                }
+            }
+        
+            // Function to fetch a quote for a given category
+            function fetchQuote(category) {
+                // Send request to the backend to fetch a quote for the selected category
+                fetch(`/quotes?category=${category}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById("quote-text").innerText = data.quotes;
+                        logHistory(category); // Log the category in history
+                    })
+                    .catch(error => console.error("Error fetching quote:", error));
+            }
+        
+            // Function to copy the displayed quote to the clipboard
+            function copyQuote() {
+                const quoteText = document.getElementById("quote-text").innerText;
+                navigator.clipboard.writeText(quoteText).then(() => {
+                    alert("Quote copied to clipboard! 📋✨");
+                    // Save copied quote to localStorage
+                    saveCopiedQuote(quoteText);
+                }).catch(error => console.error("Error copying quote:", error));
+            }
+        
+            // Function to save the copied quote in localStorage
+            function saveCopiedQuote(quoteText) {
+                const copiedQuotes = JSON.parse(localStorage.getItem("copiedQuotes")) || [];
+                
+                // Avoid duplicates in copied quotes
+                if (!copiedQuotes.includes(quoteText)) {
+                    copiedQuotes.push(quoteText);
+                    localStorage.setItem("copiedQuotes", JSON.stringify(copiedQuotes));
+                }
+            }
+        
+            // Function to display copied quotes
+            function displayCopiedQuotes() {
+                const copiedQuotesList = document.getElementById("copied-quotes-list");
+                copiedQuotesList.innerHTML = ""; // Clear the existing list
+        
+                const copiedQuotes = JSON.parse(localStorage.getItem("copiedQuotes")) || [];
+                
+                if (copiedQuotes.length === 0) {
+                    copiedQuotesList.innerHTML = "<li>No copied quotes yet.</li>";
+                } else {
+                    copiedQuotes.forEach(quote => {
+                        const listItem = document.createElement("li");
+                        listItem.textContent = quote;
+                        copiedQuotesList.appendChild(listItem);
+                    });
+                }
+            }
+        
+            // Function to toggle between sections
+            function toggleContent(sectionId) {
+                const sections = document.querySelectorAll("section");
+                sections.forEach((section) => {
+                    section.style.display = "none";
                 });
+        
+                const selectedSection = document.getElementById(sectionId);
+                if (selectedSection) {
+                    selectedSection.style.display = "block";
+                }
+        
+                if (sectionId === 'history') {
+                    displayHistory();
+                }
+                if (sectionId === 'favorites') {
+                    displayFavorites();
+                }
+                if (sectionId === 'copied-quotes') {
+                    displayCopiedQuotes();
+                }
             }
-        }
-
-        // Function to mark a quote as favorite
-        function addFavoriteQuote() {
-            const quoteText = document.getElementById("quote-text").innerText;
-            const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-            
-            // Check if quote is already a favorite
-            if (favorites.includes(quoteText)) {
-                alert("This quote is already in your favorites!");
-            } else {
-                favorites.push(quoteText);
-                localStorage.setItem("favorites", JSON.stringify(favorites));
-                alert("Quote added to favorites! 💖");
-            }
-        }
-
-        // Function to display favorite quotes
-        function displayFavorites() {
-            const favoritesList = document.getElementById("favorites-list");
-            favoritesList.innerHTML = "";
-            const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-            
-            if (favorites.length === 0) {
-                favoritesList.innerHTML = "<li>No favorite quotes yet.</li>";
-            } else {
-                favorites.forEach(quote => {
-                    const listItem = document.createElement("li");
-                    listItem.textContent = quote;
-                    favoritesList.appendChild(listItem);
-                });
-            }
-        }
-
-        // Function to fetch a quote for a given category
-        function fetchQuote(category) {
-            // Send request to the backend to fetch a quote for the selected category
-            fetch(`/quotes?category=${category}`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("quote-text").innerText = data.quotes;
-                    logHistory(category); // Log the category in history
-                })
-                .catch(error => console.error("Error fetching quote:", error));
-        }
-
-        // Function to copy the displayed quote to the clipboard
-        function copyQuote() {
-            const quoteText = document.getElementById("quote-text").innerText;
-            navigator.clipboard.writeText(quoteText).then(() => {
-                alert("Quote copied to clipboard! 📋✨");
-                // Save copied quote to localStorage
-                saveCopiedQuote(quoteText);
-            }).catch(error => console.error("Error copying quote:", error));
-        }
-
-        // Function to save the copied quote in localStorage
-        function saveCopiedQuote(quoteText) {
-            const copiedQuotes = JSON.parse(localStorage.getItem("copiedQuotes")) || [];
-            
-            // Avoid duplicates in copied quotes
-            if (!copiedQuotes.includes(quoteText)) {
-                copiedQuotes.push(quoteText);
-                localStorage.setItem("copiedQuotes", JSON.stringify(copiedQuotes));
-            }
-        }
-
-        // Function to display copied quotes
-        function displayCopiedQuotes() {
-            const copiedQuotesList = document.getElementById("copied-quotes-list");
-            copiedQuotesList.innerHTML = ""; // Clear the existing list
-
-            const copiedQuotes = JSON.parse(localStorage.getItem("copiedQuotes")) || [];
-            
-            if (copiedQuotes.length === 0) {
-                copiedQuotesList.innerHTML = "<li>No copied quotes yet.</li>";
-            } else {
-                copiedQuotes.forEach(quote => {
-                    const listItem = document.createElement("li");
-                    listItem.textContent = quote;
-                    copiedQuotesList.appendChild(listItem);
-                });
-            }
-        }
-
-        // Function to toggle between sections
-        function toggleContent(sectionId) {
-            const sections = document.querySelectorAll("section");
-            sections.forEach((section) => {
-                section.style.display = "none";
-            });
-
-            const selectedSection = document.getElementById(sectionId);
-            if (selectedSection) {
-                selectedSection.style.display = "block";
-            }
-
-            if (sectionId === 'history') {
-                displayHistory();
-            }
-            if (sectionId === 'favorites') {
-                displayFavorites();
-            }
-            if (sectionId === 'copied-quotes') {
-                displayCopiedQuotes();
-            }
-        }
-
-        // Show home when the page loads
-        window.onload = function() {
-            toggleContent('home'); // Default to home section
-        };
+        
+            // Show home when the page loads
+            window.onload = function() {
+                toggleContent('home'); // Default to home section
+            };
+       
     </script>
 </body>
 </html>
+
 
