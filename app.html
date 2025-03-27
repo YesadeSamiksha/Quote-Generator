@@ -91,48 +91,115 @@
         color: #333;
       }
 
-      .form-group {
-        margin-bottom: 20px;
-      }
+      /* Contact Us Form Styles */
+#contact {
+  background-color: #f2f2f2;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 0 auto;
+}
 
-      .form-group label {
-        font-size: 14px;
-        color: #555;
-        margin-bottom: 8px;
-        display: block;
-      }
+#contact h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
 
-      .form-group input,
-      .form-group textarea {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: 14px;
-        box-sizing: border-box;
-      }
+#contact p {
+  text-align: center;
+  color: #666;
+  font-size: 16px;
+  margin-bottom: 30px;
+}
 
-      .form-group input:focus,
-      .form-group textarea:focus {
-        outline: none;
-        border-color: #212121;
-        text-decoration: none;
-      }
+.form-group {
+  margin-bottom: 20px;
+}
 
-      .form-group button {
-        width: 100%;
-        padding: 12px;
-        background-color: #212121;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        font-size: 16px;
-        cursor: pointer;
-      }
+.form-group label {
+  display: block;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 8px;
+}
 
-      .form-group button:hover {
-        background-color: rgb(158, 142, 142);
-      }
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: #fff;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #6c63ff;
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+.form-group button {
+  width: 100%;
+  padding: 12px;
+  background-color: #6c63ff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.form-group button:hover {
+  background-color: #4e43d3;
+}
+
+#success-message {
+  text-align: center;
+  background-color: #d4edda;
+  color: #155724;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 20px;
+  display: none;
+}
+
+#error-message {
+  text-align: center;
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 20px;
+  display: none;
+}
+
+@media (max-width: 600px) {
+  #contact {
+    padding: 20px;
+    margin: 20px;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    padding: 10px;
+  }
+
+  .form-group button {
+    font-size: 14px;
+  }
+}
+
+    
 
       .toggle-link {
         text-align: center;
@@ -407,9 +474,90 @@
           <button class="clear-history" onclick="clearFavorites()">Clear Favorites</button>
         </div>
       </section>
+
+      <!-- Contact Us section -->
+<section id="contact" style="display: none;">
+  <div class="content">
+    <h2>Contact Us</h2>
+    <p>We'd love to hear from you! Please fill out the form below to get in touch.</p>
+
+    <!-- Contact Form -->
+    <form id="contact-form">
+      <div class="form-group">
+        <label for="name">Your Name:</label>
+        <input type="text" id="name" name="name" required />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Your Email:</label>
+        <input type="email" id="email" name="email" required />
+      </div>
+
+      <div class="form-group">
+        <label for="message">Your Message:</label>
+        <textarea id="message" name="message" rows="4" required></textarea>
+      </div>
+
+      <div class="form-group">
+        <button type="submit">Submit</button>
+      </div>
+    </form>
+
+    <!-- Success Message -->
+    <div id="success-message" style="display: none; color: green;">
+      <p>Thank you for contacting us! We'll get back to you soon.</p>
+    </div>
+
+    <!-- Error Message -->
+    <div id="error-message" style="display: none; color: red;">
+      <p>Oops! Something went wrong. Please try again later.</p>
+    </div>
+  </div>
+</section>
+
     </main>
 
     <script>
+
+
+      // Function to handle Contact Us form submission
+document.getElementById("contact-form").addEventListener("submit", function (event) {
+  event.preventDefault(); // Prevent the default form submission
+
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const message = document.getElementById("message").value;
+
+  // Create a message object to store
+  const contactMessage = {
+    name: name,
+    email: email,
+    message: message,
+    timestamp: new Date().toLocaleString(),
+  };
+
+  // Save the contact message to localStorage (in an array format)
+  const contactMessages = JSON.parse(localStorage.getItem("contactMessages")) || [];
+  contactMessages.push(contactMessage);
+  localStorage.setItem("contactMessages", JSON.stringify(contactMessages));
+
+  // Display success message and reset form
+  document.getElementById("success-message").style.display = "block";
+  document.getElementById("contact-form").reset();
+  document.getElementById("error-message").style.display = "none";
+
+  // Hide the success message after 5 seconds
+  setTimeout(() => {
+    document.getElementById("success-message").style.display = "none";
+  }, 5000);
+});
+
+// Function to display saved contact messages (for admin or viewing purposes)
+function displayContactMessages() {
+  const messages = JSON.parse(localStorage.getItem("contactMessages")) || [];
+  console.log(messages); // You can choose to display this in a section on the page as needed
+}
+
   // Function to add a quote to favorites
 function addFavoriteQuote(quote) {
   const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
@@ -565,4 +713,5 @@ document.addEventListener("DOMContentLoaded", () => {
     </script>
   </body>
 </html>
+
 
