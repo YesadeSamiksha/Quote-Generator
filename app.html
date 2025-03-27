@@ -207,7 +207,7 @@
       }
       .history-container {
         max-width: 800px;
-        margin: 2em auto;
+        margin: 9em auto;
         padding: 20px;
         background-color: white;
         border-radius: 8px;
@@ -399,55 +399,77 @@
     </main>
 
     <script>
-      // Function to toggle between sections
-      function toggleContent(sectionId) {
-        // Hide all sections
-        const sections = document.querySelectorAll("section");
-        sections.forEach((section) => {
-          section.style.display = "none";
-        });
-
-        // Show the selected section
-        const selectedSection = document.getElementById(sectionId);
-        if (selectedSection) {
-          selectedSection.style.display = "block";
-          logHistory(sectionId); // Log the history when a section is shown
-        }
-      }
-
-      // Function to log the history of the visited pages
-      function logHistory(pageName) {
-        const timestamp = new Date().toLocaleString();
-        const history = JSON.parse(localStorage.getItem("userHistory")) || [];
-        history.push({ page: pageName, time: timestamp });
-        localStorage.setItem("userHistory", JSON.stringify(history));
-        displayHistory();
-      }
-
-      // Function to display history
-      function displayHistory() {
-        const historyList = document.getElementById("history-list");
-        historyList.innerHTML = "";
-        const history = JSON.parse(localStorage.getItem("userHistory")) || [];
-
-        history.forEach(entry => {
-          const listItem = document.createElement("li");
-          listItem.textContent = `${entry.page} - ${entry.time}`;
-          historyList.appendChild(listItem);
-        });
-      }
-
-      // Function to clear history
-      function clearHistory() {
-        localStorage.removeItem("userHistory");
-        displayHistory();
-      }
-
-      // Show history when the page loads
-      window.onload = function() {
-        toggleContent('home'); // Ensure home is visible on load
-        displayHistory(); // Show any saved history on page load
-      };
-    </script>
+      
+     
+          // Function to toggle between sections
+          function toggleContent(sectionId) {
+              // Hide all sections
+              const sections = document.querySelectorAll("section");
+              sections.forEach((section) => {
+                  section.style.display = "none";
+              });
+      
+              // Show the selected section
+              const selectedSection = document.getElementById(sectionId);
+              if (selectedSection) {
+                  selectedSection.style.display = "block";
+                  logHistory(sectionId); // Log the history when a section is shown
+              }
+      
+              if (sectionId === 'history') {
+                  displayHistory(); // Show the browsing history when the history section is clicked
+              }
+          }
+      
+          // Function to log the history of the visited pages
+          function logHistory(sectionId) {
+              const history = JSON.parse(localStorage.getItem("quoteHistory")) || [];
+      
+              // Get the current time for the log entry
+              const currentTime = new Date().toLocaleString();
+      
+              // Create a log entry for the section visit
+              const newEntry = {
+                  category: sectionId,
+                  time: currentTime,
+              };
+      
+              // Push the new entry to history
+              history.push(newEntry);
+      
+              // Store the updated history in localStorage
+              localStorage.setItem("quoteHistory", JSON.stringify(history));
+          }
+      
+          // Function to display history
+          function displayHistory() {
+              const historyList = document.getElementById("history-list");
+              historyList.innerHTML = "";
+      
+              // Get the history from localStorage
+              const history = JSON.parse(localStorage.getItem("quoteHistory")) || [];
+      
+              // Loop through the history and display each entry
+              history.forEach(entry => {
+                  const listItem = document.createElement("li");
+                  listItem.textContent = `${entry.category} - ${entry.time}`;
+                  historyList.appendChild(listItem);
+              });
+          }
+      
+          // Function to clear history
+          function clearHistory() {
+              localStorage.removeItem("quoteHistory");
+              displayHistory();
+          }
+      
+          // Show home when the page loads
+          window.onload = function() {
+              toggleContent('home'); // Default to home section
+          };
+      </script>
+      
+      
+   
   </body>
 </html>
