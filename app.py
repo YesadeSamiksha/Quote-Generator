@@ -1,7 +1,29 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 import random
 
 app = Flask(__name__)
+import sqlite3
+
+def init_db():
+    conn = sqlite3.connect('contact.db')  # Create a database file
+    cursor = conn.cursor()
+    
+    # Create a table for storing contact form submissions
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS contacts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT NOT NULL,
+            message TEXT NOT NULL
+        )
+    ''')
+    
+    conn.commit()
+    conn.close()
+
+# Call the function to create the database
+init_db()
+
 
 # Quotes categorized
 quotes = {
@@ -133,10 +155,30 @@ def get_quotes():
     return jsonify({"quotes": random_quotes})
 
 
+# Function to insert contact form data into the database
+def insert_contact(name, email, message):
+    conn = sqlite3.connect('contact.db')
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO contacts (name, email, message) VALUES (?, ?, ?)", (name, email, message))
+    conn.commit()
+    conn.close()
+
+@app.route('/app')
+def app_page():
+    return render_template('app.html')
+
+@app.route('/submit_contact', methods=['POST'])
+def submit_contact():
+    name = request.form['name']
+    email = request.form['email']
+    message = request.form['message']
+
+    insert_contact(name, email, message)  # Store data in the database
+
+    return redirect(url_for('home'))
 
 if __name__ == "__main__":
     app.run(debug=True)
-
 
 
 
