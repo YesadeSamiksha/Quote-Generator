@@ -40,6 +40,8 @@
             font-weight: bold;
             color: #212121;
         }
+
+        
         .buttons {
             margin-top: 20px;
         }
@@ -84,39 +86,54 @@
 </head>
 <body>
     <h1 class="h1">Words of Wisdom </h1>
-    <div class="container">
-        <p id="quote-text"><strong>{{ quotes }}</strong></p>
-    </div>
+<div class="container">
+    <p id="quote-text"><strong>{{ quotes }}</strong></p>
+</div>
 
-    <div class="buttons">
-        <button onclick="fetchQuote('motivational')">Motivational</button>
-        <button onclick="fetchQuote('love')">Love</button>
-        <button onclick="fetchQuote('life')">Life</button>
-        <button onclick="fetchQuote('friendship')">Friendship</button>
-        <button onclick="fetchQuote('Movie')">Iconic Movie Quotes</button>
-        <button onclick="fetchQuote('happiness')">Happiness</button><br>
-        <button class="copy-btn" onclick="copyQuote()">📋 Copy</button>
-        <button class="dark-mode-btn" onclick="toggleDarkMode()">🌙 Dark Mode</button>
-        <button class="rainbow-btn" onclick="toggleRainbowMode()">Rainbow Mode</button>
-        <button class="favorite-btn" onclick="addFavoriteQuote()"> Favourite</button> <!-- Favorite Button -->
-        <a href="/#home">
-            <button>Back</button>
-        </a>
-    </div>
+<div class="buttons">
+    <button onclick="fetchQuote('motivational')">Motivational</button>
+    <button onclick="fetchQuote('love')">Love</button>
+    <button onclick="fetchQuote('life')">Life</button>
+    <button onclick="fetchQuote('friendship')">Friendship</button>
+    <button onclick="fetchQuote('Movie')">Iconic Movie Quotes</button>
+    <button onclick="fetchQuote('happiness')">Happiness</button><br>
+    <button class="copy-btn" onclick="copyQuote()">📋 Copy</button>
+    <button class="dark-mode-btn" onclick="toggleDarkMode()">🌙 Dark Mode</button>
+    <button class="rainbow-btn" onclick="toggleRainbowMode()">Rainbow Mode</button>
+    <button class="favorite-btn" onclick="addFavoriteQuote()">❤️ Favourite</button>
+    <button class="share-btn" onclick="shareQuote()">📤 Share</button>
+    <button class="tts-btn" onclick="speakQuote()">🔊 Listen</button>
+    
+    <a href="/#home">
+        <button>Back</button>
+    </a>
+</div>
 
-    <section id="history">
-        <ul id="history-list"></ul>
-    </section>
 
-    <section id="favorites" class="history-container" style="display: none;">
-        <h2>Favorites</h2>
-        <ul id="favorites-list"></ul>
-    </section>
+<div id="customization-panel" style="display: none;">
+    <label>Font: <select id="fontSelect" onchange="changeFont()">
+        <option value="Arial">Arial</option>
+        <option value="Courier New">Courier New</option>
+        <option value="Georgia">Georgia</option>
+        <option value="Times New Roman">Times New Roman</option>
+    </select></label>
+    <label>Text Color: <input type="color" id="textColor" onchange="changeTextColor()"></label>
+    <label>Background Color: <input type="color" id="bgColor" onchange="changeBgColor()"></label>
+</div>
 
-    <section id="copied-quotes" class="history-container" style="display: none;">
-        <h2>Copied Quotes</h2>
-        <ul id="copied-quotes-list"></ul>
-    </section>
+<section id="history">
+    <ul id="history-list"></ul>
+</section>
+
+<section id="favorites" class="history-container" style="display: none;">
+    <h2>Favorites</h2>
+    <ul id="favorites-list"></ul>
+</section>
+
+<section id="copied-quotes" class="history-container" style="display: none;">
+    <h2>Copied Quotes</h2>
+    <ul id="copied-quotes-list"></ul>
+</section>
 
     <script>
         
@@ -287,10 +304,55 @@
             window.onload = function() {
                 toggleContent('home'); // Default to home section
             };
-       
+            function shareQuote() {
+    let quoteElement = document.getElementById("quote-text");
+    
+    if (!quoteElement) {
+        alert("Quote text not found!");
+        return;
+    }
+
+    let quote = quoteElement.innerText.trim();
+    if (quote === "") {
+        alert("No quote available to share.");
+        return;
+    }
+
+    let encodedQuote = encodeURIComponent(quote);
+    
+    let whatsappUrl = `https://api.whatsapp.com/send?text=${encodedQuote}`;
+    let facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=https://yourwebsite.com&quote=${encodedQuote}`;
+    let linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=https://yourwebsite.com&summary=${encodedQuote}`;
+    let instagramUrl = "#"; // Instagram does not support direct URL sharing
+    
+    let shareOptions = `
+        <div id="share-links">
+            <p>Share on:</p>
+            <a href='${whatsappUrl}' target='_blank'>WhatsApp</a> |
+            <a href='${facebookUrl}' target='_blank'>Facebook</a> |
+            <a href='${linkedinUrl}' target='_blank'>LinkedIn</a> |
+            <a href='${instagramUrl}' target='_blank' onclick='alert("Instagram sharing is not supported directly.")'>Instagram</a>
+        </div>
+    `;
+
+    // Remove existing share links (if any) before adding new ones
+    let existingShareDiv = document.getElementById("share-links");
+    if (existingShareDiv) {
+        existingShareDiv.remove();
+    }
+
+    let shareDiv = document.createElement("div");
+    shareDiv.innerHTML = shareOptions;
+    document.querySelector(".buttons").appendChild(shareDiv);
+}
+
+function speakQuote() {
+    let quote = document.getElementById("quote-text").innerText;
+    let speech = new SpeechSynthesisUtterance(quote);
+    speechSynthesis.speak(speech);
+}
+
+
     </script>
 </body>
 </html>
-
-
-
