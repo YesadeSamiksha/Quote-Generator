@@ -1,10 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Indie+Flower&family=Pacifico&display=swap" rel="stylesheet">
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>💖 Aesthetic Quote Generator 💖</title>
      <style>
+
+        .handwritten-1 { font-family: 'Dancing Script', cursive; }
+        .handwritten-2 { font-family: 'Pacifico', cursive; }
+        .handwritten-3 { font-family: 'Indie Flower', cursive; }
+
        
         .h1{
             text-align: center;
@@ -86,7 +93,7 @@
 </head>
 <body>
     <h1 class="h1">Words of Wisdom </h1>
-<div class="container">
+<div class="container" id="quote-container">
     <p id="quote-text"><strong>{{ quotes }}</strong></p>
 </div>
 
@@ -103,7 +110,8 @@
     <button class="favorite-btn" onclick="addFavoriteQuote()">❤️ Favourite</button>
     <button class="share-btn" onclick="shareQuote()">📤 Share</button>
     <button class="tts-btn" onclick="speakQuote()">🔊 Listen</button>
-    
+    <button class="handwritten-btn" onclick="toggleHandwritten()">✍️ Handwritten Style</button>
+    <button class="customize-btn" onclick="openCustomization()">🎨 Customize</button>
     <a href="/#home">
         <button>Back</button>
     </a>
@@ -352,7 +360,45 @@ function speakQuote() {
     speechSynthesis.speak(speech);
 }
 
+let handwritingStyles = ['handwritten-1', 'handwritten-2', 'handwritten-3'];
+        let currentStyleIndex = 0;
+
+        function toggleHandwritten() {
+            let quoteText = document.getElementById("quote-text");
+
+            // Remove any existing handwritten style
+            quoteText.classList.remove(...handwritingStyles);
+
+            // Apply new handwritten style
+            quoteText.classList.add(handwritingStyles[currentStyleIndex]);
+
+            // Cycle through the styles
+            currentStyleIndex = (currentStyleIndex + 1) % handwritingStyles.length;
+        }
+
+        function openCustomization() {
+    let panel = document.getElementById("customization-panel");
+    panel.style.display = panel.style.display === "none" ? "block" : "none";
+}
+
+function changeFont() {
+    let font = document.getElementById("fontSelect").value;
+    document.getElementById("quote-text").style.fontFamily = font;
+}
+
+function changeTextColor() {
+    let color = document.getElementById("textColor").value;
+    document.getElementById("quote-text").style.color = color;
+}
+
+function changeBgColor() {
+    let color = document.getElementById("bgColor").value;
+    document.getElementById("quote-container").style.backgroundColor = color;
+}
 
     </script>
 </body>
 </html>
+
+
+
