@@ -1,9 +1,12 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 import random
-from werkzeug.security import generate_password_hash, check_password_hash  # Use this for password hashing
+from werkzeug.security import generate_password_hash, check_password_hash
+import sqlite3
+import os
 
 app = Flask(__name__)
-import sqlite3
+app.secret_key = os.urandom(24)  # Secret key to secure session cookies
+
 
 def init_db():
     conn = sqlite3.connect('contact.db')  # Create a database file
@@ -174,8 +177,10 @@ def signup_page():
 @app.route('/signup', methods=['POST'])
 def signup():
     email = request.form.get('email')
-    password = request.form['password']
+    password = request.form.get('password')
     
+    if not email or not password:
+        return "Missing email or password", 400
     # Hash the password before saving it to the database
     hashed_password = generate_password_hash(password)
     
@@ -185,12 +190,12 @@ def signup():
     try:
         cursor.execute("INSERT INTO users (email, password) VALUES (?, ?)", (email, hashed_password))
         conn.commit()
-        conn.close()
-        return redirect(url_for('login_page'))  # Redirect to login page after successful signup
+        
+        return render_template('login.html')  # Redirect to login page after successful signup
     except sqlite3.IntegrityError:
-        conn.close()
         return "Error: User already exists"
-
+    finally:
+        conn.close()
 # Route to render the login page
 @app.route('/login')
 def login_page():
@@ -210,10 +215,15 @@ def login():
     conn.close()
     
     if user and check_password_hash(user[2], password):  # Check if the hashed password matches
+        session['user'] = email 
         return render_template('app.html')  # Redirect to home page if login is successful
     else:
         return "Invalid credentials"
 
+@app.route('/logout')
+def logout():
+    session.clear()  # Clears the session data
+    return render_template('login.html')  # Redirect to homepage after logout
 
 # Function to insert contact form data into the database
 def insert_contact(name, email, message):
@@ -232,10 +242,14 @@ def submit_contact():
     name = request.form['name']
     email = request.form['email']
     message = request.form['message']
-
-    insert_contact(name, email, message)  # Store data in the database
-
-    return redirect(url_for('home'))
+    
+    conn = sqlite3.connect('contact.db')
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO contacts (name, email, message) VALUES (?, ?, ?)", (name, email, message))
+    conn.commit()
+    conn.close()
+    
+    return render_template('app.html')
 
 if __name__ == "__main__":
     app.run(debug=True)
