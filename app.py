@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for
 import random
+from werkzeug.security import generate_password_hash, check_password_hash  # Use this for password hashing
 
 app = Flask(__name__)
 import sqlite3
@@ -18,6 +19,16 @@ def init_db():
         )
     ''')
     
+        # Create a table for storing users (for login/signup)
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT NOT NULL UNIQUE,
+            password TEXT NOT NULL
+        )
+    ''')
+
+
     conn.commit()
     conn.close()
 
@@ -146,13 +157,62 @@ def gallery():
 def home():
     category = request.args.get("category", "motivational")
     random_quotes = random.choice(quotes[category])
-    return render_template("app.html", quotes=random_quotes)
+    return render_template("login.html", quotes=random_quotes)
 
 @app.route("/quotes", methods=["GET"])
 def get_quotes():
     category = request.args.get("category", "motivational")
     random_quotes = random.choice(quotes[category])
     return jsonify({"quotes": random_quotes})
+
+# Route to render the signup page
+@app.route('/signup')
+def signup_page():
+    return render_template('signup.html')
+
+# Route to handle the signup logic
+@app.route('/signup', methods=['POST'])
+def signup():
+    email = request.form.get('email')
+    password = request.form['password']
+    
+    # Hash the password before saving it to the database
+    hashed_password = generate_password_hash(password)
+    
+    # Insert the new user into the database
+    conn = sqlite3.connect('contact.db')
+    cursor = conn.cursor()
+    try:
+        cursor.execute("INSERT INTO users (email, password) VALUES (?, ?)", (email, hashed_password))
+        conn.commit()
+        conn.close()
+        return redirect(url_for('login_page'))  # Redirect to login page after successful signup
+    except sqlite3.IntegrityError:
+        conn.close()
+        return "Error: User already exists"
+
+# Route to render the login page
+@app.route('/login')
+def login_page():
+    return render_template('login.html')
+
+# Route to handle the login logic
+@app.route('/login', methods=['POST'])
+def login():
+    email = request.form.get('email')
+    password = request.form['password']
+    
+    # Check if the user exists and verify the password
+    conn = sqlite3.connect('contact.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
+    user = cursor.fetchone()
+    conn.close()
+    
+    if user and check_password_hash(user[2], password):  # Check if the hashed password matches
+        return render_template('app.html')  # Redirect to home page if login is successful
+    else:
+        return "Invalid credentials"
 
 
 # Function to insert contact form data into the database
